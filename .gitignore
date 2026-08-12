@@ -1,0 +1,23 @@
+# data folder (it contains the large raw and parquet files)
+data/
+*.zip
+*.parquet
+*.xlsx
+*.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Streamlit
+.streamlit/
+
+# other
+.DS_Store
