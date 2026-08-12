@@ -1,7 +1,7 @@
-# data folder (it contains the large raw and parquet files)
-data/
+
 *.zip
 *.parquet
+!data/processed_retail.parquet
 *.xlsx
 *.csv
 
