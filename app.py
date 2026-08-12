@@ -2,8 +2,9 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 from src.data_loader import get_data
-from mlxtend.frequent_patterns import apriori, association_rules
-
+from mlxtend.frequent_patterns import fpgrowth, association_rules
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 # Page configuration
 st.set_page_config(page_title="E-Commerce EDA Dashboard", layout="wide")
 
@@ -178,9 +179,9 @@ with tab5:
                 if basket_sets.shape[0] < 10:
                     st.warning("Not enough multi-item baskets to find association rules.")
                 else:
-                    frequent_itemsets = apriori(basket_sets, min_support=0.03, use_colnames=True)
+                    frequent_itemsets = fpgrowth(basket_sets, min_support=0.04, use_colnames=True)
                     if frequent_itemsets.empty:
-                        st.info("No frequent itemsets found with 3% support. Try a larger dataset or different country.")
+                        st.info("No frequent itemsets found with 4% support. Try a larger dataset or different country.")
                     else:
                         rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1.0)
                         rules = rules.sort_values(by='lift', ascending=False)
