@@ -1,6 +1,6 @@
 # E-Commerce Exploratory Data Analysis (EDA) Dashboard
 
-📄 [Full EDA Report (PDF)](reports/EDA_Report.pdf)
+🚀 **[Live Demo](https://ecommerce-eda-dashboard-v2daalqnwktr6wsvt6cegg.streamlit.app/)** &nbsp;|&nbsp; 📄 [Full EDA Report (PDF)](reports/EDA_Report.pdf)
 
 ## Project Overview & Business Value
 This project is an end-to-end interactive Streamlit dashboard built to perform Exploratory Data Analysis (EDA) on a real-world e-commerce transactional dataset. 
@@ -28,7 +28,7 @@ graph TD
 - **Pandas** for robust data ingestion, cleaning, and transformation.
 - **PyArrow (Parquet)** for caching processed data, resulting in 10x-20x faster read speeds compared to CSVs.
 - **Plotly Express** for responsive, interactive visualizations.
-- **Streamlit** for rapid web application deployment.
+- **Streamlit** for rapid web application deployment, deployed live on **Streamlit Community Cloud**.
 - **MLxtend** for generating Market Basket association rules.
 
 ## Key Insights Uncovered
