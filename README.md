@@ -1,5 +1,7 @@
 # E-Commerce Exploratory Data Analysis (EDA) Dashboard
 
+📄 [Full EDA Report (PDF)](reports/EDA_Report.pdf)
+
 ## Project Overview & Business Value
 This project is an end-to-end interactive Streamlit dashboard built to perform Exploratory Data Analysis (EDA) on a real-world e-commerce transactional dataset. 
 
@@ -35,9 +37,8 @@ graph TD
 3. **Cross-Selling Opportunities:** Market basket analysis shows strong correlations between certain product categories (e.g., specific colors of alarm clocks or complementary garden items), which can be bundled for higher average order value.
 
 ## Screenshots
-*(Add screenshots of your application here by replacing these placeholders)*
-![Dashboard Main View](assets/dashboard.png)
-![Basket Analysis](assets/basket_analysis.png)
+
+*(Add a few screenshots here — e.g. the KPI row, RFM treemap, and cohort retention heatmap — to give visitors a quick visual preview before they run it themselves.)*
 
 ## Setup Instructions
 
@@ -56,8 +57,18 @@ pip install -r requirements.txt
 ```
 
 ### 3. Run the Dashboard
-Since the dataset is already cleaned and cached into a high-performance Parquet file (`data/processed_retail.parquet`), you can immediately launch the Streamlit app:
+A pre-processed dataset (`data/processed_retail.parquet`) is already included in the repo, so you can launch the dashboard directly:
 ```bash
 streamlit run app.py
 ```
 The application will open automatically in your browser at `http://localhost:8501`.
+
+### (Optional) Rebuild the dataset from scratch
+If you'd like to re-download and re-process the raw data yourself instead of using the included Parquet cache:
+```bash
+# Download the raw dataset from the UCI Machine Learning Repository
+python download_data.py
+
+# Clean, transform, and re-cache to Parquet
+python -m src.data_loader
+```
