@@ -34,14 +34,19 @@ graph TD
 2. **Retention Drop-off:** Cohort analysis reveals a steep drop in customer retention after the first month, highlighting a need for stronger post-purchase engagement.
 3. **Cross-Selling Opportunities:** Market basket analysis shows strong correlations between certain product categories (e.g., specific colors of alarm clocks or complementary garden items), which can be bundled for higher average order value.
 
+## Screenshots
+*(Add screenshots of your application here by replacing these placeholders)*
+![Dashboard Main View](assets/dashboard.png)
+![Basket Analysis](assets/basket_analysis.png)
+
 ## Setup Instructions
 
 Follow these steps to run the dashboard locally on your machine.
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/ecommerce_eda_dashboard.git
-cd ecommerce_eda_dashboard
+git clone https://github.com/charan722/ecommerce-eda-dashboard.git
+cd ecommerce-eda-dashboard
 ```
 
 ### 2. Install Dependencies
@@ -50,18 +55,8 @@ It's recommended to use a virtual environment.
 pip install -r requirements.txt
 ```
 
-### 3. Download and Process the Data
-Run the provided scripts to fetch the raw data from the UCI Machine Learning Repository and compress it into a high-performance Parquet format:
-```bash
-# Download the raw dataset
-python download_data.py
-
-# Clean, transform, and cache to Parquet
-python -m src.data_loader
-```
-
-### 4. Run the Dashboard
-Launch the Streamlit app:
+### 3. Run the Dashboard
+Since the dataset is already cleaned and cached into a high-performance Parquet file (`data/processed_retail.parquet`), you can immediately launch the Streamlit app:
 ```bash
 streamlit run app.py
 ```
