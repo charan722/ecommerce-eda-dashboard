@@ -50,7 +50,7 @@ with tab1:
     monthly_rev = filtered_df.groupby("YearMonth")["TotalAmount"].sum().reset_index()
     fig_line = px.line(monthly_rev, x="YearMonth", y="TotalAmount", markers=True, 
                        title="Revenue over Time", labels={"TotalAmount": "Revenue ($)"})
-    st.plotly_chart(fig_line, use_container_width=True)
+    st.plotly_chart(fig_line, width="stretch")
 
 with tab2:
     col_left, col_right = st.columns(2)
@@ -59,14 +59,14 @@ with tab2:
         top_products = filtered_df.groupby("Description")["TotalAmount"].sum().nlargest(10).reset_index()
         fig_bar = px.bar(top_products, x="TotalAmount", y="Description", orientation="h",
                          color="TotalAmount", color_continuous_scale="Viridis")
-        st.plotly_chart(fig_bar, use_container_width=True)
+        st.plotly_chart(fig_bar, width="stretch")
         
     with col_right:
         st.subheader("Revenue by Country")
         country_rev = filtered_df.groupby("Country")["TotalAmount"].sum().reset_index()
         fig_map = px.choropleth(country_rev, locations="Country", locationmode="country names",
                                 color="TotalAmount", color_continuous_scale="Blues")
-        st.plotly_chart(fig_map, use_container_width=True)
+        st.plotly_chart(fig_map, width="stretch")
 
 with tab3:
     st.subheader("RFM Customer Segmentation")
@@ -110,9 +110,9 @@ with tab3:
                 fig_tree = px.treemap(segment_counts, path=['Segment'], values='Count', 
                                       color='Count', color_continuous_scale='Blues',
                                       title='Customer Segments Overview')
-                st.plotly_chart(fig_tree, use_container_width=True)
+                st.plotly_chart(fig_tree, width="stretch")
             with col_r2:
-                st.dataframe(rfm[['Recency', 'Frequency', 'Monetary', 'Segment']].head(10), use_container_width=True)
+                st.dataframe(rfm[['Recency', 'Frequency', 'Monetary', 'Segment']].head(10), width="stretch")
         except Exception as e:
             st.error(f"Not enough data to calculate quantiles for this selection. (Error: {e})")
 
@@ -142,7 +142,7 @@ with tab4:
                                aspect="auto",
                                color_continuous_scale="Viridis",
                                title="Monthly Customer Retention Rates")
-        st.plotly_chart(fig_cohort, use_container_width=True)
+        st.plotly_chart(fig_cohort, width="stretch")
 
 with tab5:
     st.subheader("Basket Analysis (Cross-Selling)")
@@ -190,4 +190,4 @@ with tab5:
                         rules['consequents'] = rules['consequents'].apply(lambda x: ', '.join(list(x)))
                         rules = rules[['antecedents', 'consequents', 'support', 'confidence', 'lift']]
                         
-                        st.dataframe(rules.head(20), use_container_width=True)
+                        st.dataframe(rules.head(20), width="stretch")
