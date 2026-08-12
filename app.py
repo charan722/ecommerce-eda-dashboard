@@ -149,40 +149,45 @@ with tab5:
     st.markdown("Association rules uncovering which items are frequently bought together.")
     
     # Filter for computationally safe size - default to UK if selected, else take the top 10000 invoices
-    df_basket = filtered_df.copy()
-    if 'United Kingdom' in df_basket['Country'].unique():
-        df_basket = df_basket[df_basket['Country'] == 'United Kingdom']
+    df_basket = filtered_df[filtered_df['Country'] == 'United Kingdom'] if 'United Kingdom' in filtered_df['Country'].unique() else filtered_df
     
-    # Limit to top N invoices to prevent memory crash
-    top_invoices = df_basket['InvoiceNo'].value_counts().head(5000).index
+    # Identify top 500 most popular products to reduce matrix dimensionality (Memory optimization)
+    top_products = df_basket['Description'].value_counts().head(500).index
+    df_basket = df_basket[df_basket['Description'].isin(top_products)]
+    
+    # Limit to top 2000 invoices to prevent memory crash
+    top_invoices = df_basket['InvoiceNo'].value_counts().head(2000).index
     df_basket = df_basket[df_basket['InvoiceNo'].isin(top_invoices)]
     
     if df_basket.empty:
         st.warning("Not enough data for basket analysis.")
     else:
-        basket = (df_basket.groupby(['InvoiceNo', 'Description'])['Quantity']
-                  .sum().unstack().reset_index().fillna(0)
-                  .set_index('InvoiceNo'))
-        
-        # Convert to boolean for mlxtend
-        basket_sets = (basket > 0).astype(bool)
-        # Drop invoices with < 2 items
-        basket_sets = basket_sets[(basket_sets.sum(axis=1)) >= 2]
-        
-        if basket_sets.shape[0] < 10:
-            st.warning("Not enough multi-item baskets to find association rules.")
-        else:
-            with st.spinner("Computing association rules (this might take a few seconds)..."):
-                frequent_itemsets = apriori(basket_sets, min_support=0.03, use_colnames=True)
-                if frequent_itemsets.empty:
-                    st.info("No frequent itemsets found with 3% support. Try a larger dataset.")
+        st.info("Market Basket Analysis is highly computationally intensive. Click the button below to generate cross-selling rules.")
+        if st.button("Run Basket Analysis", type="primary"):
+            with st.spinner("Computing association rules (this may take a minute)..."):
+                # Pivot efficiently
+                basket = (df_basket.groupby(['InvoiceNo', 'Description'])['Quantity']
+                          .sum().unstack().reset_index().fillna(0)
+                          .set_index('InvoiceNo'))
+                
+                # Convert to boolean for mlxtend
+                basket_sets = (basket > 0).astype(bool)
+                # Drop invoices with < 2 items
+                basket_sets = basket_sets[(basket_sets.sum(axis=1)) >= 2]
+                
+                if basket_sets.shape[0] < 10:
+                    st.warning("Not enough multi-item baskets to find association rules.")
                 else:
-                    rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1.0)
-                    rules = rules.sort_values(by='lift', ascending=False)
-                    
-                    # Formatting for display
-                    rules['antecedents'] = rules['antecedents'].apply(lambda x: ', '.join(list(x)))
-                    rules['consequents'] = rules['consequents'].apply(lambda x: ', '.join(list(x)))
-                    rules = rules[['antecedents', 'consequents', 'support', 'confidence', 'lift']]
-                    
-                    st.dataframe(rules.head(20), use_container_width=True)
+                    frequent_itemsets = apriori(basket_sets, min_support=0.03, use_colnames=True)
+                    if frequent_itemsets.empty:
+                        st.info("No frequent itemsets found with 3% support. Try a larger dataset or different country.")
+                    else:
+                        rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1.0)
+                        rules = rules.sort_values(by='lift', ascending=False)
+                        
+                        # Formatting for display
+                        rules['antecedents'] = rules['antecedents'].apply(lambda x: ', '.join(list(x)))
+                        rules['consequents'] = rules['consequents'].apply(lambda x: ', '.join(list(x)))
+                        rules = rules[['antecedents', 'consequents', 'support', 'confidence', 'lift']]
+                        
+                        st.dataframe(rules.head(20), use_container_width=True)
