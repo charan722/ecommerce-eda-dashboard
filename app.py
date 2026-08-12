@@ -85,37 +85,41 @@ with tab3:
             'TotalAmount': 'sum'
         }).rename(columns={'InvoiceDate': 'Recency', 'InvoiceNo': 'Frequency', 'TotalAmount': 'Monetary'})
         
-        # Calculate scores
-        try:
-            r_groups = pd.qcut(rfm['Recency'], q=4, labels=range(4, 0, -1))
-            f_groups = pd.qcut(rfm['Frequency'].rank(method='first'), q=4, labels=range(1, 5))
-            m_groups = pd.qcut(rfm['Monetary'], q=4, labels=range(1, 5))
-            
-            rfm = rfm.assign(R=r_groups, F=f_groups, M=m_groups)
-            rfm['RFM_Score'] = rfm[['R', 'F', 'M']].sum(axis=1)
-            
-            # Segment Definition
-            def segment_customer(score):
-                if score >= 10: return 'Champions'
-                elif score >= 8: return 'Loyal Customers'
-                elif score >= 6: return 'Potential Loyalists'
-                elif score >= 4: return 'At Risk'
-                else: return 'Lost'
+        if len(rfm) < 4:
+            st.warning("Not enough unique customers to perform RFM segmentation (minimum 4 required). Please select a broader dataset or remove filters.")
+        else:
+        
+            # Calculate scores
+            try:
+                r_groups = pd.qcut(rfm['Recency'], q=4, labels=range(4, 0, -1))
+                f_groups = pd.qcut(rfm['Frequency'].rank(method='first'), q=4, labels=range(1, 5))
+                m_groups = pd.qcut(rfm['Monetary'], q=4, labels=range(1, 5))
                 
-            rfm['Segment'] = rfm['RFM_Score'].apply(segment_customer)
-            
-            col_r1, col_r2 = st.columns([2, 1])
-            with col_r1:
-                segment_counts = rfm['Segment'].value_counts().reset_index()
-                segment_counts.columns = ['Segment', 'Count']
-                fig_tree = px.treemap(segment_counts, path=['Segment'], values='Count', 
-                                      color='Count', color_continuous_scale='Blues',
-                                      title='Customer Segments Overview')
-                st.plotly_chart(fig_tree, width="stretch")
-            with col_r2:
-                st.dataframe(rfm[['Recency', 'Frequency', 'Monetary', 'Segment']].head(10), width="stretch")
-        except Exception as e:
-            st.error(f"Not enough data to calculate quantiles for this selection. (Error: {e})")
+                rfm = rfm.assign(R=r_groups, F=f_groups, M=m_groups)
+                rfm['RFM_Score'] = rfm[['R', 'F', 'M']].sum(axis=1)
+                
+                # Segment Definition
+                def segment_customer(score):
+                    if score >= 10: return 'Champions'
+                    elif score >= 8: return 'Loyal Customers'
+                    elif score >= 6: return 'Potential Loyalists'
+                    elif score >= 4: return 'At Risk'
+                    else: return 'Lost'
+                    
+                rfm['Segment'] = rfm['RFM_Score'].apply(segment_customer)
+                
+                col_r1, col_r2 = st.columns([2, 1])
+                with col_r1:
+                    segment_counts = rfm['Segment'].value_counts().reset_index()
+                    segment_counts.columns = ['Segment', 'Count']
+                    fig_tree = px.treemap(segment_counts, path=['Segment'], values='Count', 
+                                          color='Count', color_continuous_scale='Blues',
+                                          title='Customer Segments Overview')
+                    st.plotly_chart(fig_tree, width="stretch")
+                with col_r2:
+                    st.dataframe(rfm[['Recency', 'Frequency', 'Monetary', 'Segment']].head(10), width="stretch")
+            except Exception as e:
+                st.error(f"Not enough data to calculate quantiles for this selection. (Error: {e})")
 
 with tab4:
     st.subheader("Cohort Analysis / Retention Matrix")
